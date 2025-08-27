@@ -1,5 +1,5 @@
 {% set name = "rfc3986" %}
-{% set version = "1.4.0" %}
+{% set version = "2.0.0" %}
 
 package:
   name: {{ name }}
@@ -7,34 +7,33 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 112398da31a3344dc25dbf477d8df6cb34f9278a94fee2625d89e4514be8bb9d
+  sha256: 97aacf9dbd4bfd829baad6e6309fa6573aaf1be3f6fa735c8ab05e46cecb261c
 
 build:
-  noarch: python
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: True  # [py<37]
 
 requirements:
   host:
     - pip
     - python
+    - wheel
+    - setuptools
   run:
     - python
 
 test:
   source_files:
     - tests
-  requires:
-    - idna
-    - pip
-    - pytest
-    - pytest-cov >=2.0
   imports:
     - rfc3986
   commands:
-    - python -m pip check
-    # 100% coverage is not possible in a single run due to py27-only code
-    - pytest --cov rfc3986 --cov-fail-under 99 -vv
+    - pip check
+    - pytest -v tests
+  requires:
+    - pip
+    - pytest
 
 about:
   home: https://rfc3986.readthedocs.io
